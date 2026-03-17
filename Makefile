@@ -127,14 +127,13 @@ update-hooks:
 ## deploy: Build and deploy to GitHub Pages
 deploy: build
 	@echo "$(BLUE)Deploying to GitHub Pages...$(NC)"
-	@if ! command -v gh >/dev/null 2>&1; then \
-		echo "$(RED)Error: gh CLI not found. Install from https://cli.github.com$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(BLUE)Pushing to gh-pages branch...$(NC)"
-	@git worktree add gh-pages-deploy gh-pages 2>/dev/null || true
+	@echo "$(BLUE)Setting up worktree...$(NC)"
+	@git worktree add gh-pages-deploy gh-pages 2>/dev/null || (git worktree remove gh-pages-deploy 2>/dev/null; git worktree add gh-pages-deploy gh-pages)
+	@echo "$(BLUE)Copying build files...$(NC)"
+	@rm -rf gh-pages-deploy/*
 	@cp -r dist/* gh-pages-deploy/
-	@cd gh-pages-deploy && git add . && git commit -m "Deploy $(shell date +%Y-%m-%d-%H:%M:%S)" && git push origin gh-pages
+	@echo "$(BLUE)Committing and pushing...$(NC)"
+	@cd gh-pages-deploy && PRE_COMMIT_ALLOW_NO_CONFIG=1 git add . && PRE_COMMIT_ALLOW_NO_CONFIG=1 git commit -m "Deploy $(shell date +%Y-%m-%d-%H:%M:%S)" && git push origin gh-pages
 	@git worktree remove gh-pages-deploy
 	@echo "$(GREEN)✓ Deployed to GitHub Pages$(NC)"
 
