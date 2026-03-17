@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" width="259.95" height="259.95" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 259.95 259.95">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#Unbenannter_Verlauf_11-11);
+      }
+
+      .cls-2 {
+        fill: url(#Unbenannter_Verlauf_11-10);
+      }
+
+      .cls-3 {
+        fill: url(#Unbenannter_Verlauf_11-8);
+      }
+
+      .cls-4 {
+        fill: url(#Unbenannter_Verlauf_11-4);
+      }
+
+      .cls-5 {
+        fill: url(#Unbenannter_Verlauf_11-5);
+      }
+
+      .cls-6 {
+        fill: url(#Unbenannter_Verlauf_11-7);
+      }
+
+      .cls-7 {
+        fill: url(#Unbenannter_Verlauf_11-6);
+      }
+
+      .cls-8 {
+        fill: url(#Unbenannter_Verlauf_11-9);
+      }
+
+      .cls-9 {
+        fill: url(#Unbenannter_Verlauf_11-3);
+      }
+
+      .cls-10 {
+        fill: url(#Unbenannter_Verlauf_11-2);
+      }
+
+      .cls-11 {
+        fill: url(#Unbenannter_Verlauf_11);
+      }
+    </style>
+    <linearGradient id="Unbenannter_Verlauf_11" data-name="Unbenannter Verlauf 11" x1="-158.98" y1="427.83" x2="-163.99" y2="425.27" gradientTransform="translate(5560.12 29003.81) scale(33.91 -67.81)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9fc53a"/>
+      <stop offset=".65" stop-color="#0090d4"/>
+      <stop offset="1" stop-color="#0071b4"/>
+    </linearGradient>
+    <linearGradient id="Unbenannter_Verlauf_11-2" data-name="Unbenannter Verlauf 11" x1="-165.32" y1="422.17" x2="-167.84" y2="417" gradientTransform="translate(11338.41 14195.78) scale(67.55 -33.65)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-3" data-name="Unbenannter Verlauf 11" x1="-163.88" y1="426.09" x2="-166.4" y2="420.93" gradientTransform="translate(11293.99 14421.66) scale(67.29 -33.64)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-4" data-name="Unbenannter Verlauf 11" x1="-162.69" y1="426.38" x2="-167.74" y2="423.8" gradientTransform="translate(5742.01 28777.6) scale(33.64 -67.29)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-5" data-name="Unbenannter Verlauf 11" x1="-166.08" y1="428.25" x2="-167.56" y2="426.75" gradientTransform="translate(19465.81 49535.84) scale(115.39 -115.39)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-6" data-name="Unbenannter Verlauf 11" x1="-165.56" y1="428.96" x2="-167.03" y2="427.46" gradientTransform="translate(19321.77 49535.84) scale(115.39 -115.39)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-7" data-name="Unbenannter Verlauf 11" x1="-166.27" y1="428.41" x2="-167.74" y2="426.9" gradientTransform="translate(19321.77 49391.8) scale(115.39 -115.39)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-8" data-name="Unbenannter Verlauf 11" x1="-166.79" y1="427.7" x2="-168.27" y2="426.19" gradientTransform="translate(19465.64 49391.37) scale(115.39 -115.39)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-9" data-name="Unbenannter Verlauf 11" x1="-162.7" y1="427.38" x2="-166.34" y2="424.47" gradientTransform="translate(8362.53 26634.3) scale(50.21 -62.3)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-10" data-name="Unbenannter Verlauf 11" x1="-163.78" y1="426.85" x2="-166.99" y2="424" gradientTransform="translate(9571.36 27196.56) scale(57.03 -63.61)" xlink:href="#Unbenannter_Verlauf_11"/>
+    <linearGradient id="Unbenannter_Verlauf_11-11" data-name="Unbenannter Verlauf 11" x1="-163.2" y1="426.37" x2="-167.37" y2="423.46" gradientTransform="translate(7419.25 26630.14) scale(43.89 -62.29)" xlink:href="#Unbenannter_Verlauf_11"/>
+  </defs>
+  <g id="logo">
+    <g id="Gruppe_1" data-name="Gruppe 1">
+      <path id="Pfad_1" data-name="Pfad 1" class="cls-11" d="M0,130.11l33.91,33.91c-3.81-10.9-5.77-22.36-5.78-33.91,.04-11.54,1.99-23,5.78-33.91L0,130.11Z"/>
+      <path id="Pfad_2" data-name="Pfad 2" class="cls-10" d="M130.11,27.86c11.46,.02,22.84,1.97,33.64,5.78L130.11,0l-33.91,33.64c10.9-3.81,22.36-5.77,33.91-5.78Z"/>
+      <path id="Pfad_3" data-name="Pfad 3" class="cls-9" d="M130.11,232.09c-11.54-.04-23-1.99-33.91-5.78l33.64,33.64,33.64-33.64c-10.71,3.83-22,5.79-33.38,5.78Z"/>
+      <path id="Pfad_4" data-name="Pfad 4" class="cls-4" d="M259.95,130.11l-33.64-33.64c3.81,10.81,5.77,22.18,5.78,33.64-.02,11.46-1.97,22.84-5.78,33.64l33.64-33.64Z"/>
+      <path id="Pfad_5" data-name="Pfad 5" class="cls-5" d="M206.07,197.92c-2.37,2.63-4.99,5.26-7.89,7.89l-53.88,53.88c60.73-6.71,108.67-54.66,115.39-115.39l-53.62,53.62Z"/>
+      <path id="Pfad_6" data-name="Pfad 6" class="cls-7" d="M59.4,203.44l-3.15-3.15L.26,144.3c6.83,60.45,54.93,108.82,115.39,115.39l-56.25-56.25Z"/>
+      <path id="Pfad_7" data-name="Pfad 7" class="cls-6" d="M56.51,59.4l3.15-3.15L115.65,.26C55.2,6.83,7.1,55.2,.26,115.65L56.51,59.4Z"/>
+      <path id="Pfad_8" data-name="Pfad 8" class="cls-3" d="M198.18,54.15c2.63,2.37,5.26,4.99,7.89,7.89l53.62,53.62C252.97,54.92,205.03,6.98,144.3,.26l53.88,53.88Z"/>
+    </g>
+    <g id="Gruppe_2" data-name="Gruppe 2">
+      <path id="Pfad_9" data-name="Pfad 9" class="cls-8" d="M99.88,145.48c.07,2.38-.47,4.73-1.58,6.83-1.05,2.01-2.59,3.73-4.47,4.99-1.93,1.36-4.06,2.42-6.31,3.15-2.56,.77-5.22,1.13-7.88,1.05h-29.96v-62.29h33.38c2,0,3.98,.45,5.78,1.31,1.71,.93,3.23,2.18,4.47,3.68,1.21,1.51,2.19,3.19,2.89,4.99,.73,1.84,1.09,3.8,1.05,5.78,0,3.05-.82,6.04-2.37,8.67-1.51,2.65-3.81,4.76-6.57,6.04,3.4,.87,6.38,2.92,8.41,5.78,2.1,2.37,3.15,5.78,3.15,9.99Zm-38.11-36.01v15.77h16.03c1.95-.02,3.83-.77,5.26-2.1,1.43-1.58,2.18-3.66,2.1-5.78,.03-2.12-.72-4.18-2.1-5.78-1.3-1.37-3.11-2.13-4.99-2.1h-16.3Zm25.76,33.64c-.05-1.07-.22-2.13-.53-3.15-.26-1.01-.81-1.92-1.58-2.63-.61-.81-1.43-1.45-2.37-1.84-.87-.54-1.87-.81-2.89-.79h-18.66v16.3h17.87c1.07-.05,2.13-.22,3.15-.53,.97-.46,1.86-1.08,2.63-1.84,.77-.71,1.31-1.62,1.58-2.63,.54-.87,.81-1.87,.79-2.9Z"/>
+      <path id="Pfad_10" data-name="Pfad 10" class="cls-2" d="M152.45,154.42c-4.51,4.75-10.8,7.41-17.35,7.36-3.98,.03-7.92-.78-11.56-2.37-3.61-1.57-6.84-3.9-9.46-6.83-5.62-6.29-8.71-14.44-8.67-22.87-.03-4.15,.78-8.26,2.37-12.09,1.53-3.66,3.67-7.03,6.31-9.99,2.79-2.86,6.09-5.17,9.73-6.83,8.7-3.85,18.69-3.46,27.07,1.05,4.09,2.29,7.39,5.78,9.46,9.99l-8.93,6.57c-1.39-3-3.69-5.48-6.57-7.1-2.94-1.14-6.05-1.76-9.2-1.84-2.54-.01-5.05,.53-7.36,1.58-2.12,1.11-4,2.63-5.52,4.47-1.53,2-2.77,4.22-3.68,6.57-.82,2.55-1.26,5.21-1.32,7.89,0,2.77,.45,5.52,1.31,8.15,.84,2.44,2.18,4.68,3.94,6.57,1.62,1.85,3.58,3.37,5.78,4.47,2.31,1.05,4.82,1.59,7.36,1.58,6.04,0,11.57-2.89,16.3-8.41v-3.94h-12.62v-8.94h22.6v32.07h-9.98v-7.1Z"/>
+      <path id="Pfad_11" data-name="Pfad 11" class="cls-1" d="M172.95,161.52v-62.29h12.09v51.78h31.8v10.51h-43.89Z"/>
+    </g>
+  </g>
+</svg>
