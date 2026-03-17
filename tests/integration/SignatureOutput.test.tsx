@@ -15,18 +15,26 @@ describe('SignatureOutput', () => {
 
   it('should copy HTML to clipboard when copy button is clicked', async () => {
     const user = userEvent.setup();
+    const mockWriteText = vi.fn().mockResolvedValue(undefined);
+
+    // Override the global mock for this test
+    Object.assign(navigator.clipboard, { writeText: mockWriteText });
+
     render(<SignatureOutput html={testHtml} />);
 
     const copyButton = screen.getByRole('button', { name: /copy/i });
     await user.click(copyButton);
 
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(testHtml);
+      expect(mockWriteText).toHaveBeenCalledWith(testHtml);
     });
   });
 
   it('should show success message after successful copy', async () => {
     const user = userEvent.setup();
+    const mockWriteText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator.clipboard, { writeText: mockWriteText });
+
     render(<SignatureOutput html={testHtml} />);
 
     const copyButton = screen.getByRole('button', { name: /copy/i });
@@ -40,13 +48,9 @@ describe('SignatureOutput', () => {
   it('should show error message when copy fails', async () => {
     const user = userEvent.setup();
 
-    // Mock clipboard failure
-    Object.defineProperty(navigator, 'clipboard', {
-      value: {
-        writeText: vi.fn().mockRejectedValue(new Error('Permission denied')),
-      },
-      writable: true,
-    });
+    // Mock clipboard failure for this specific test
+    const mockWriteText = vi.fn().mockRejectedValue(new Error('Permission denied'));
+    Object.assign(navigator.clipboard, { writeText: mockWriteText });
 
     render(<SignatureOutput html={testHtml} />);
 
@@ -54,29 +58,31 @@ describe('SignatureOutput', () => {
     await user.click(copyButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/failed/i)).toBeInTheDocument();
+      expect(screen.getByText(/permission denied/i)).toBeInTheDocument();
     });
   });
 
   it('should trigger download when download button is clicked', async () => {
     const user = userEvent.setup();
 
-    // Mock URL.createObjectURL and document.createElement
+    // Mock URL and document methods
     const mockCreateObjectURL = vi.fn(() => 'blob:mock-url');
     const mockRevokeObjectURL = vi.fn();
     global.URL.createObjectURL = mockCreateObjectURL;
     global.URL.revokeObjectURL = mockRevokeObjectURL;
 
+    // Mock link click
     const mockClick = vi.fn();
-    const mockRemove = vi.fn();
     const originalCreateElement = document.createElement.bind(document);
-    vi.spyOn(document, 'createElement').mockImplementation((tagName) => {
-      const element = originalCreateElement(tagName);
+    const createElementSpy = vi.spyOn(document, 'createElement');
+
+    createElementSpy.mockImplementation((tagName: string) => {
       if (tagName === 'a') {
-        element.click = mockClick;
-        element.remove = mockRemove;
+        const anchor = originalCreateElement('a') as HTMLAnchorElement;
+        anchor.click = mockClick;
+        return anchor;
       }
-      return element;
+      return originalCreateElement(tagName);
     });
 
     render(<SignatureOutput html={testHtml} />);
@@ -88,6 +94,8 @@ describe('SignatureOutput', () => {
       expect(mockCreateObjectURL).toHaveBeenCalled();
       expect(mockClick).toHaveBeenCalled();
     });
+
+    createElementSpy.mockRestore();
   });
 
   it('should disable buttons when HTML is empty', () => {
@@ -113,15 +121,24 @@ describe('SignatureOutput', () => {
   it('should download file with correct filename', async () => {
     const user = userEvent.setup();
 
-    const mockAnchor = document.createElement('a');
-    const mockClick = vi.fn();
-    mockAnchor.click = mockClick;
+    let capturedFilename = '';
+    const originalCreateElement = document.createElement.bind(document);
+    const createElementSpy = vi.spyOn(document, 'createElement');
 
-    vi.spyOn(document, 'createElement').mockImplementation((tagName) => {
+    createElementSpy.mockImplementation((tagName: string) => {
       if (tagName === 'a') {
-        return mockAnchor;
+        const anchor = originalCreateElement('a') as HTMLAnchorElement;
+        Object.defineProperty(anchor, 'download', {
+          set: (value: string) => {
+            capturedFilename = value;
+          },
+          get: () => capturedFilename,
+          configurable: true,
+        });
+        anchor.click = vi.fn();
+        return anchor;
       }
-      return document.createElement(tagName);
+      return originalCreateElement(tagName);
     });
 
     render(<SignatureOutput html={testHtml} />);
@@ -130,7 +147,9 @@ describe('SignatureOutput', () => {
     await user.click(downloadButton);
 
     await waitFor(() => {
-      expect(mockAnchor.download).toMatch(/signature.*\.html/);
+      expect(capturedFilename).toMatch(/signature.*\.html/);
     });
+
+    createElementSpy.mockRestore();
   });
 });

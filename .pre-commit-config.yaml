@@ -51,7 +51,7 @@ repos:
         language: system
         pass_filenames: false
         files: \.(ts|tsx)$
-        stages: [commit]
+        stages: [pre-commit]
 
       # Type checking
       - id: tsc
@@ -60,7 +60,7 @@ repos:
         language: system
         pass_filenames: false
         files: \.(ts|tsx)$
-        stages: [commit]
+        stages: [pre-commit]
 
       # Build validation (ensure project builds)
       - id: npm-build
@@ -69,7 +69,7 @@ repos:
         language: system
         pass_filenames: false
         files: \.(ts|tsx|json|css)$
-        stages: [push]
+        stages: [pre-push]
 
 # Global settings
 default_language_version:

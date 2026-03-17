@@ -15,7 +15,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:fast": "vitest run --exclude '**/*.slow.test.ts' --exclude '**/*.slow.test.tsx'",
+    "test:fast": "vitest run",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

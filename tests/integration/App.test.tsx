@@ -110,6 +110,9 @@ describe('App Integration Tests', () => {
 
   it('should copy signature HTML to clipboard', async () => {
     const user = userEvent.setup();
+    const mockWriteText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator.clipboard, { writeText: mockWriteText });
+
     render(<App />);
 
     await waitFor(() => {
@@ -129,8 +132,8 @@ describe('App Integration Tests', () => {
 
     // Check that clipboard was called with HTML content
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalled();
-      const callArg = (navigator.clipboard.writeText as any).mock.calls[0][0];
+      expect(mockWriteText).toHaveBeenCalled();
+      const callArg = mockWriteText.mock.calls[0][0];
       expect(callArg).toContain('John Doe');
       expect(callArg).toContain('Manager');
       expect(callArg).toContain('<table');
