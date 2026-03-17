@@ -183,7 +183,7 @@ This will:
 
 ## License
 
-[Your License Here]
+Proprietary.
 
 ## Contributing
 
@@ -194,5 +194,3 @@ This will:
 5. Run `make test && make format && make lint && make type-check`
 6. Commit (pre-commit hooks will run automatically)
 7. Push and submit a pull request
-
-**Remember**: NEVER use `--no-verify` when committing. Pre-commit hooks ensure code quality and prevent broken builds.
