@@ -133,9 +133,15 @@ deploy: build
 	@rm -rf gh-pages-deploy/*
 	@cp -r dist/* gh-pages-deploy/
 	@echo "$(BLUE)Committing and pushing...$(NC)"
-	@cd gh-pages-deploy && PRE_COMMIT_ALLOW_NO_CONFIG=1 git add . && PRE_COMMIT_ALLOW_NO_CONFIG=1 git commit -m "Deploy $(shell date +%Y-%m-%d-%H:%M:%S)" && git push origin gh-pages
+	@cd gh-pages-deploy && PRE_COMMIT_ALLOW_NO_CONFIG=1 git add . && \
+		if PRE_COMMIT_ALLOW_NO_CONFIG=1 git diff --cached --quiet; then \
+			echo "$(GREEN)✓ Already up-to-date (no changes to deploy)$(NC)"; \
+		else \
+			PRE_COMMIT_ALLOW_NO_CONFIG=1 git commit -m "Deploy $(shell date +%Y-%m-%d-%H:%M:%S)" && \
+			git push origin gh-pages && \
+			echo "$(GREEN)✓ Deployed to GitHub Pages$(NC)"; \
+		fi
 	@git worktree remove gh-pages-deploy
-	@echo "$(GREEN)✓ Deployed to GitHub Pages$(NC)"
 
 ## clean: Remove node_modules and build artifacts
 clean:
