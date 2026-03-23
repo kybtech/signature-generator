@@ -129,6 +129,7 @@ deploy: build
 	@echo "$(BLUE)Deploying to GitHub Pages...$(NC)"
 	@echo "$(BLUE)Setting up worktree...$(NC)"
 	@git worktree add gh-pages-deploy gh-pages 2>/dev/null || (git worktree remove gh-pages-deploy 2>/dev/null; git worktree add gh-pages-deploy gh-pages)
+	@cd gh-pages-deploy && git fetch origin gh-pages && git reset --hard origin/gh-pages
 	@echo "$(BLUE)Copying build files...$(NC)"
 	@rm -rf gh-pages-deploy/*
 	@cp -r dist/* gh-pages-deploy/
