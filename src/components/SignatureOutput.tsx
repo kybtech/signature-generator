@@ -12,6 +12,12 @@ export default function SignatureOutput({ html }: SignatureOutputProps) {
 
   const handleCopy = async () => {
     try {
+      // Debug: log what we're about to copy
+      console.log('[Copy] HTML length:', html.length);
+      console.log('[Copy] HTML preview (first 300 chars):', html.substring(0, 300));
+      console.log('[Copy] Contains remote URL?:', html.includes('https://trustedcarrier.net/darkgreen.svg'));
+      console.log('[Copy] Contains data URI?:', html.includes('data:image/svg+xml'));
+
       await copyToClipboard(html);
       setCopyStatus('success');
       setCopyMessage('Copied to clipboard!');
@@ -50,7 +56,12 @@ export default function SignatureOutput({ html }: SignatureOutputProps) {
         <button onClick={handleCopy} disabled={isDisabled} className="btn btn-primary" aria-label="Copy to clipboard">
           📋 Copy to Clipboard
         </button>
-        <button onClick={handleDownload} disabled={isDisabled} className="btn btn-secondary" aria-label="Download as HTML file">
+        <button
+          onClick={handleDownload}
+          disabled={isDisabled}
+          className="btn btn-secondary"
+          aria-label="Download as HTML file"
+        >
           💾 Download HTML
         </button>
       </div>

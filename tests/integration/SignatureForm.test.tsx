@@ -163,4 +163,152 @@ describe('SignatureForm', () => {
     expect((screen.getByLabelText(/phone/i) as HTMLInputElement).value).toBe('+49 123 456');
     expect((screen.getByLabelText(/email/i) as HTMLInputElement).value).toBe('test@example.com');
   });
+
+  describe('Remote URLs feature', () => {
+    it('should render "Use remote URLs" checkbox', () => {
+      render(<SignatureForm onChange={mockOnChange} />);
+
+      const checkbox = screen.getByLabelText(/use remote urls/i);
+      expect(checkbox).toBeInTheDocument();
+      expect((checkbox as HTMLInputElement).type).toBe('checkbox');
+      expect((checkbox as HTMLInputElement).checked).toBe(false);
+    });
+
+    it('should show file upload by default', () => {
+      render(<SignatureForm onChange={mockOnChange} />);
+
+      const photoInput = screen.getByLabelText(/photo/i);
+      expect((photoInput as HTMLInputElement).type).toBe('file');
+    });
+
+    it('should switch to URL input when checkbox is checked', async () => {
+      const user = userEvent.setup();
+      render(<SignatureForm onChange={mockOnChange} />);
+
+      const checkbox = screen.getByLabelText(/use remote urls/i);
+      await user.click(checkbox);
+
+      // File input should be gone (look for exact match)
+      expect(screen.queryByLabelText(/^photo \(optional\)$/i)).not.toBeInTheDocument();
+
+      // URL inputs should appear
+      expect(screen.getByLabelText(/photo url/i)).toBeInTheDocument();
+      expect((screen.getByLabelText(/photo url/i) as HTMLInputElement).type).toBe('url');
+    });
+
+    it('should switch back to file upload when checkbox is unchecked', async () => {
+      const user = userEvent.setup();
+      render(<SignatureForm onChange={mockOnChange} />);
+
+      const checkbox = screen.getByLabelText(/use remote urls/i);
+
+      // Check then uncheck
+      await user.click(checkbox);
+      await user.click(checkbox);
+
+      // File input should be back
+      expect(screen.getByLabelText(/photo/i)).toBeInTheDocument();
+      expect((screen.getByLabelText(/photo/i) as HTMLInputElement).type).toBe('file');
+
+      // URL input should be gone
+      expect(screen.queryByLabelText(/photo url/i)).not.toBeInTheDocument();
+    });
+
+    it('should accept photo URL input', async () => {
+      const user = userEvent.setup();
+      render(<SignatureForm onChange={mockOnChange} />);
+
+      const checkbox = screen.getByLabelText(/use remote urls/i);
+      await user.click(checkbox);
+
+      const photoUrlInput = screen.getByLabelText(/photo url/i);
+      await user.type(photoUrlInput, 'https://example.com/photo.jpg');
+
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenCalled();
+      });
+
+      const lastCall = mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1][0];
+      expect(lastCall.photoDataUri).toBe('https://example.com/photo.jpg');
+    });
+
+    it('should use default logo URL when remote URLs enabled', async () => {
+      const user = userEvent.setup();
+      render(<SignatureForm onChange={mockOnChange} />);
+
+      const checkbox = screen.getByLabelText(/use remote urls/i);
+      await user.click(checkbox);
+
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenCalled();
+      });
+
+      const lastCall = mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1][0];
+      expect(lastCall.useRemoteUrls).toBe(true);
+      expect(lastCall.companyLogoUrl).toBe('https://trustedcarrier.net/darkgreen.svg');
+      // CRITICAL: companyLogoUrl must be set, not undefined, for the remote URL to work
+      expect(lastCall.companyLogoUrl).toBeDefined();
+    });
+
+    it('should allow custom company logo URL', async () => {
+      const user = userEvent.setup();
+      render(<SignatureForm onChange={mockOnChange} />);
+
+      const checkbox = screen.getByLabelText(/use remote urls/i);
+      await user.click(checkbox);
+
+      const logoUrlInput = screen.getByLabelText(/company logo url/i);
+      await user.clear(logoUrlInput);
+      await user.type(logoUrlInput, 'https://example.com/custom-logo.svg');
+
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenCalled();
+      });
+
+      const lastCall = mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1][0];
+      expect(lastCall.companyLogoUrl).toBe('https://example.com/custom-logo.svg');
+    });
+
+    it('should clear photo data when switching to remote URLs', async () => {
+      const user = userEvent.setup();
+      const initialData: SignatureData = {
+        name: 'Test',
+        title: 'Test',
+        phone: '+49 123',
+        email: 'test@test.com',
+        photoDataUri: 'data:image/png;base64,abc123',
+      };
+
+      render(<SignatureForm onChange={mockOnChange} initialData={initialData} />);
+
+      const checkbox = screen.getByLabelText(/use remote urls/i);
+      await user.click(checkbox);
+
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenCalled();
+      });
+
+      const lastCall = mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1][0];
+      expect(lastCall.photoDataUri).toBeUndefined();
+    });
+
+    it('should preserve photo URL value when toggling checkbox', async () => {
+      const user = userEvent.setup();
+      render(<SignatureForm onChange={mockOnChange} />);
+
+      const checkbox = screen.getByLabelText(/use remote urls/i);
+      await user.click(checkbox);
+
+      const photoUrlInput = screen.getByLabelText(/photo url/i);
+      await user.type(photoUrlInput, 'https://example.com/photo.jpg');
+
+      // Toggle off and back on
+      await user.click(checkbox);
+      await user.click(checkbox);
+
+      // Value should be preserved
+      const photoUrlInputAfter = screen.getByLabelText(/photo url/i);
+      expect((photoUrlInputAfter as HTMLInputElement).value).toBe('https://example.com/photo.jpg');
+    });
+  });
 });

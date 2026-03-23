@@ -199,4 +199,86 @@ describe('App Integration Tests', () => {
     expect(nameInput.value).toBe('Test Name');
     expect(titleInput.value).toBe('Test Title');
   });
+
+  it('should use remote URL for company logo when remote URLs checkbox is enabled', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+    });
+
+    // Fill in required fields
+    await user.type(screen.getByLabelText(/name/i), 'John Doe');
+    await user.type(screen.getByLabelText(/title/i), 'Manager');
+    await user.type(screen.getByLabelText(/phone/i), '+49 123 456789');
+    await user.type(screen.getByLabelText(/email/i), 'john@example.com');
+
+    // Enable remote URLs
+    const checkbox = screen.getByLabelText(/use remote urls/i);
+    await user.click(checkbox);
+
+    // Wait for preview to update
+    await waitFor(() => {
+      const iframe = screen.getByTitle(/signature preview/i) as HTMLIFrameElement;
+      const iframeDoc = iframe.contentDocument;
+      const html = iframeDoc?.body.innerHTML || '';
+
+      // Debug: print what we got
+      if (!html.includes('https://trustedcarrier.net/darkgreen.svg')) {
+        console.log('HTML does not contain expected remote URL');
+        console.log('HTML content:', html.substring(0, 500));
+        console.log('Looking for logo src...');
+        const logoMatches = html.match(/src="[^"]*darkgreen[^"]*"/g);
+        console.log('Logo src matches:', logoMatches);
+      }
+
+      // Should contain the remote URL, not the mocked data URI
+      expect(html).toContain('https://trustedcarrier.net/darkgreen.svg');
+      // Should NOT contain the mocked data URI for company logo
+      expect(html).not.toContain('data:image/svg+xml;base64,logo');
+    });
+  });
+
+  it('should copy HTML with remote URL to clipboard when remote URLs is enabled', async () => {
+    const user = userEvent.setup();
+    const mockWriteText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator.clipboard, { writeText: mockWriteText });
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+    });
+
+    // Fill in form
+    await user.type(screen.getByLabelText(/name/i), 'John Doe');
+    await user.type(screen.getByLabelText(/title/i), 'Manager');
+    await user.type(screen.getByLabelText(/phone/i), '+49 123 456789');
+    await user.type(screen.getByLabelText(/email/i), 'john@example.com');
+
+    // Enable remote URLs
+    const checkbox = screen.getByLabelText(/use remote urls/i);
+    await user.click(checkbox);
+
+    // Click copy button
+    const copyButton = screen.getByRole('button', { name: /copy/i });
+    await waitFor(() => expect(copyButton).not.toBeDisabled());
+    await user.click(copyButton);
+
+    // Check that clipboard was called with HTML content containing remote URL
+    await waitFor(() => {
+      expect(mockWriteText).toHaveBeenCalled();
+      const callArg = mockWriteText.mock.calls[0][0];
+      console.log('Clipboard content (first 500 chars):', callArg.substring(0, 500));
+
+      // Should contain remote URL
+      expect(callArg).toContain('https://trustedcarrier.net/darkgreen.svg');
+      // Should NOT contain mocked data URI for company logo
+      expect(callArg).not.toContain('data:image/svg+xml;base64,logo');
+    });
+
+    // Check success message
+    expect(await screen.findByText(/copied/i)).toBeInTheDocument();
+  });
 });

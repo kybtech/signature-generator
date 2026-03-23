@@ -8,6 +8,8 @@ interface SignatureFormProps {
   initialData?: SignatureData;
 }
 
+const DEFAULT_COMPANY_LOGO_URL = 'https://trustedcarrier.net/darkgreen.svg';
+
 export default function SignatureForm({ onChange, initialData }: SignatureFormProps) {
   const [formData, setFormData] = useState<SignatureData>({
     name: initialData?.name || '',
@@ -15,10 +17,16 @@ export default function SignatureForm({ onChange, initialData }: SignatureFormPr
     phone: initialData?.phone || '',
     email: initialData?.email || '',
     photoDataUri: initialData?.photoDataUri,
+    useRemoteUrls: initialData?.useRemoteUrls || false,
+    companyLogoUrl: initialData?.companyLogoUrl || DEFAULT_COMPANY_LOGO_URL,
   });
 
   const [photoError, setPhotoError] = useState<string>('');
   const [photoLoading, setPhotoLoading] = useState(false);
+
+  // Keep track of URL inputs separately to preserve them when toggling
+  const [photoUrl, setPhotoUrl] = useState<string>('');
+  const [companyLogoUrl, setCompanyLogoUrl] = useState<string>(DEFAULT_COMPANY_LOGO_URL);
 
   useEffect(() => {
     onChange(formData);
@@ -27,6 +35,28 @@ export default function SignatureForm({ onChange, initialData }: SignatureFormPr
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const useRemoteUrls = e.target.checked;
+
+    if (useRemoteUrls) {
+      // Switching to remote URLs
+      setFormData((prev) => ({
+        ...prev,
+        useRemoteUrls: true,
+        companyLogoUrl: companyLogoUrl,
+        photoDataUri: photoUrl || undefined,
+      }));
+    } else {
+      // Switching back to file upload
+      setFormData((prev) => ({
+        ...prev,
+        useRemoteUrls: false,
+        companyLogoUrl: undefined,
+        photoDataUri: undefined,
+      }));
+    }
   };
 
   const handlePhotoChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +79,18 @@ export default function SignatureForm({ onChange, initialData }: SignatureFormPr
     } finally {
       setPhotoLoading(false);
     }
+  };
+
+  const handlePhotoUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setPhotoUrl(url);
+    setFormData((prev) => ({ ...prev, photoDataUri: url || undefined }));
+  };
+
+  const handleCompanyLogoUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setCompanyLogoUrl(url);
+    setFormData((prev) => ({ ...prev, companyLogoUrl: url }));
   };
 
   return (
@@ -116,17 +158,72 @@ export default function SignatureForm({ onChange, initialData }: SignatureFormPr
       </div>
 
       <div className="form-group">
-        <label htmlFor="photo">Photo (optional)</label>
-        <input type="file" id="photo" name="photo" accept="image/png,image/jpeg,image/jpg,image/svg+xml" onChange={handlePhotoChange} />
-        <small className="help-text">PNG, JPEG, or SVG. Max 5MB.</small>
-        {photoLoading && <p className="loading-text">Loading photo...</p>}
-        {photoError && <p className="error-text">{photoError}</p>}
-        {formData.photoDataUri && !photoError && (
-          <div className="photo-preview">
-            <img src={formData.photoDataUri} alt="Preview" />
-          </div>
-        )}
+        <label htmlFor="useRemoteUrls">
+          <input
+            type="checkbox"
+            id="useRemoteUrls"
+            name="useRemoteUrls"
+            checked={formData.useRemoteUrls}
+            onChange={handleCheckboxChange}
+          />{' '}
+          Use remote URLs
+        </label>
+        <small className="help-text">Use remote image URLs instead of embedding images</small>
       </div>
+
+      {formData.useRemoteUrls ? (
+        <>
+          <div className="form-group">
+            <label htmlFor="companyLogoUrl">Company Logo URL</label>
+            <input
+              type="url"
+              id="companyLogoUrl"
+              name="companyLogoUrl"
+              value={companyLogoUrl}
+              onChange={handleCompanyLogoUrlChange}
+              placeholder="https://trustedcarrier.net/darkgreen.svg"
+            />
+            <small className="help-text">URL to the company logo image</small>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="photoUrl">Photo URL (optional)</label>
+            <input
+              type="url"
+              id="photoUrl"
+              name="photoUrl"
+              value={photoUrl}
+              onChange={handlePhotoUrlChange}
+              placeholder="https://example.com/photo.jpg"
+            />
+            <small className="help-text">URL to your photo</small>
+            {photoUrl && (
+              <div className="photo-preview">
+                <img src={photoUrl} alt="Preview" />
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="form-group">
+          <label htmlFor="photo">Photo (optional)</label>
+          <input
+            type="file"
+            id="photo"
+            name="photo"
+            accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+            onChange={handlePhotoChange}
+          />
+          <small className="help-text">PNG, JPEG, or SVG. Max 5MB.</small>
+          {photoLoading && <p className="loading-text">Loading photo...</p>}
+          {photoError && <p className="error-text">{photoError}</p>}
+          {formData.photoDataUri && !photoError && (
+            <div className="photo-preview">
+              <img src={formData.photoDataUri} alt="Preview" />
+            </div>
+          )}
+        </div>
+      )}
     </form>
   );
 }
