@@ -27,6 +27,9 @@ function formatPhoneForTel(phone: string): string {
  * @param data - User signature data (name, title, phone, email, optional photo)
  * @param assets - Company assets as data URIs (logos and icons)
  * @returns Complete HTML string for email signature
+ *
+ * Note: BGL logo and social media icons (www, linkedin, instagram) always use remote URLs
+ * from trustedcarrier.net to reduce HTML size, regardless of the useRemoteUrls setting.
  */
 export function generateSignatureHtml(data: SignatureData, assets: SignatureAssets): string {
   const escapedName = escapeHtml(data.name);
@@ -35,6 +38,14 @@ export function generateSignatureHtml(data: SignatureData, assets: SignatureAsse
   const escapedEmail = escapeHtml(data.email);
 
   const phoneForTel = formatPhoneForTel(data.phone);
+
+  // Social media icons and BGL logo always use remote URLs to reduce HTML size
+  const REMOTE_URLS = {
+    bglLogo: 'https://trustedcarrier.net/bgl.svg',
+    websiteIcon: 'https://www.trustedcarrier.net/www.png',
+    linkedinIcon: 'https://www.trustedcarrier.net/linkedin.png',
+    instagramIcon: 'https://www.trustedcarrier.net/instagram.png',
+  };
 
   // Build the photo cell HTML - only include personal photo if provided
   const photoImgHtml = data.photoDataUri
@@ -72,7 +83,7 @@ export function generateSignatureHtml(data: SignatureData, assets: SignatureAsse
                 <div>Trusted Carrier Logistik GmbH<br></div>
                 <div>Initiative by <a data-ik="ik-secure" rel="noopener noreferrer" href="https://www.bgl-ev.de/"
                     style="color: #1c3940; text-decoration: none; display: inline-block; vertical-align: middle;"
-                    title="BGL e.V."><img src="${assets.bglLogo}" alt="BGL e.V." width="13" height="13"
+                    title="BGL e.V."><img src="${REMOTE_URLS.bglLogo}" alt="BGL e.V." width="13" height="13"
                       style="display: inline-block; width: 1em; height: 1em; vertical-align: -0.12em; border: 0;"></a><br>
                 </div>
               </td>
@@ -105,16 +116,16 @@ export function generateSignatureHtml(data: SignatureData, assets: SignatureAsse
                     <tr>
                       <td style="padding: 0 6px 0 0;"><a data-ik="ik-secure" rel="noopener noreferrer"
                           href="https://trustedcarrier.net/" style="text-decoration: none;"><img
-                            src="${assets.websiteIcon}" alt="Website" width="22"
+                            src="${REMOTE_URLS.websiteIcon}" alt="Website" width="22"
                             style="display: block; border: 0; width: 22px; height: 22px;"></a><br></td>
                       <td style="padding: 0 6px 0 0;"><a data-ik="ik-secure" rel="noopener noreferrer"
                           href="https://de.linkedin.com/company/trusted-carrier-logistik-gmbh"
-                          style="text-decoration: none;"><img src="${assets.linkedinIcon}"
+                          style="text-decoration: none;"><img src="${REMOTE_URLS.linkedinIcon}"
                             alt="LinkedIn" width="22"
                             style="display: block; border: 0; width: 22px; height: 22px;"></a><br></td>
                       <td style="padding: 0;"><a data-ik="ik-secure" rel="noopener noreferrer"
                           href="https://www.instagram.com/trustedcarrier/" style="text-decoration: none;"><img
-                            src="${assets.instagramIcon}" alt="Instagram" width="22"
+                            src="${REMOTE_URLS.instagramIcon}" alt="Instagram" width="22"
                             style="display: block; border: 0; width: 22px; height: 22px;"></a><br></td>
                     </tr>
                   </tbody>

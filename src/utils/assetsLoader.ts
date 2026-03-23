@@ -5,10 +5,8 @@ import type { SignatureAssets } from '@/types/signature';
 
 // Import assets - Vite will handle these as base64 data URIs
 import companyLogoUrl from '@/assets/darkgreen.svg?url';
-import bglLogoUrl from '@/assets/bgl.svg?url';
-import websiteIconUrl from '@/assets/www.png?url';
-import linkedinIconUrl from '@/assets/linkedin.png?url';
-import instagramIconUrl from '@/assets/instagram.png?url';
+// Note: BGL logo and social media icons are not imported here as they use remote URLs
+// to reduce HTML size (see signatureTemplate.ts)
 
 /**
  * Fetches an asset and converts it to a data URI
@@ -27,21 +25,12 @@ async function fetchAsDataUri(url: string): Promise<string> {
 /**
  * Loads all company assets as data URIs
  * This is called once when the app starts to convert all assets to inline data URIs
+ * Note: BGL logo and social media icons use remote URLs and are not loaded here
  */
 export async function loadSignatureAssets(): Promise<SignatureAssets> {
-  const [companyLogo, bglLogo, websiteIcon, linkedinIcon, instagramIcon] = await Promise.all([
-    fetchAsDataUri(companyLogoUrl),
-    fetchAsDataUri(bglLogoUrl),
-    fetchAsDataUri(websiteIconUrl),
-    fetchAsDataUri(linkedinIconUrl),
-    fetchAsDataUri(instagramIconUrl),
-  ]);
+  const [companyLogo] = await Promise.all([fetchAsDataUri(companyLogoUrl)]);
 
   return {
     companyLogo,
-    bglLogo,
-    websiteIcon,
-    linkedinIcon,
-    instagramIcon,
   };
 }

@@ -4,7 +4,8 @@ export const testSignatureData = {
     title: 'Managing Director',
     phone: '+49 171 2900 239',
     email: 'karlheinz.toni@trustedcarrier.net',
-    photoDataUri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    photoDataUri:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
   },
   withoutPhoto: {
     name: 'Max Mustermann',
@@ -22,8 +23,5 @@ export const testSignatureData = {
 
 export const testAssets = {
   companyLogo: 'data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=',
-  bglLogo: 'data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=',
-  websiteIcon: 'data:image/png;base64,iVBORw0KGg=',
-  linkedinIcon: 'data:image/png;base64,iVBORw0KGg=',
-  instagramIcon: 'data:image/png;base64,iVBORw0KGg=',
+  // Note: BGL logo and social media icons use remote URLs and are not included here
 };

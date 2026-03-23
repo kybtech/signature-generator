@@ -16,10 +16,11 @@ describe('signatureTemplate', () => {
 
       // Check that assets are included
       expect(html).toContain(testAssets.companyLogo);
-      expect(html).toContain(testAssets.bglLogo);
-      expect(html).toContain(testAssets.websiteIcon);
-      expect(html).toContain(testAssets.linkedinIcon);
-      expect(html).toContain(testAssets.instagramIcon);
+      // BGL logo and social media icons should use remote URLs
+      expect(html).toContain('https://trustedcarrier.net/bgl.svg');
+      expect(html).toContain('https://www.trustedcarrier.net/www.png');
+      expect(html).toContain('https://www.trustedcarrier.net/linkedin.png');
+      expect(html).toContain('https://www.trustedcarrier.net/instagram.png');
 
       // Check structural elements
       expect(html).toContain('<table');
@@ -37,12 +38,18 @@ describe('signatureTemplate', () => {
       expect(html).toContain(testSignatureData.withoutPhoto.email);
 
       // Check that photo section is handled properly (no personal photo img tag)
+      // Should have no PNG data URIs since social media icons use remote URLs
       const photoImgCount = (html.match(/src="data:image\/png/g) || []).length;
-      // Should have 3 PNG images (www, linkedin, instagram) but no personal photo
-      expect(photoImgCount).toBe(3);
+      expect(photoImgCount).toBe(0);
 
       // Check that company logo is still present
       expect(html).toContain(testAssets.companyLogo);
+
+      // Check that BGL logo and social media icons use remote URLs
+      expect(html).toContain('https://trustedcarrier.net/bgl.svg');
+      expect(html).toContain('https://www.trustedcarrier.net/www.png');
+      expect(html).toContain('https://www.trustedcarrier.net/linkedin.png');
+      expect(html).toContain('https://www.trustedcarrier.net/instagram.png');
     });
 
     it('should escape HTML special characters to prevent XSS', () => {
@@ -62,19 +69,19 @@ describe('signatureTemplate', () => {
       expect(html).toContain('</table>');
     });
 
-    it('should use inline data URIs for all images', () => {
+    it('should use remote URLs for social media icons to reduce HTML size', () => {
       const html = generateSignatureHtml(testSignatureData.withPhoto, testAssets);
 
-      // Check that NO image src attributes use external URLs
-      expect(html).not.toMatch(/src="https?:\/\//);
-      expect(html).not.toMatch(/src='https?:\/\//);
+      // BGL logo and social media icons should use remote URLs from trustedcarrier.net
+      expect(html).toContain('src="https://trustedcarrier.net/bgl.svg"');
+      expect(html).toContain('src="https://www.trustedcarrier.net/www.png"');
+      expect(html).toContain('src="https://www.trustedcarrier.net/linkedin.png"');
+      expect(html).toContain('src="https://www.trustedcarrier.net/instagram.png"');
 
-      // Check that data URIs are present
-      expect(html).toMatch(/src="data:image\//g);
-
-      // Count data URI occurrences (should have 6: photo + company logo + bgl + 3 social icons)
+      // Count data URI occurrences (should have 2: photo + company logo)
+      // BGL logo and social media icons should NOT use data URIs
       const dataUriCount = (html.match(/src="data:image\//g) || []).length;
-      expect(dataUriCount).toBe(6);
+      expect(dataUriCount).toBe(2);
     });
 
     it('should maintain proper email signature structure with tables', () => {
@@ -123,6 +130,60 @@ describe('signatureTemplate', () => {
 
       // BGL link
       expect(html).toContain('href="https://www.bgl-ev.de/"');
+    });
+
+    it('should use remote URL for company logo when provided', () => {
+      const remoteLogoUrl = 'https://trustedcarrier.net/darkgreen.svg';
+      const assetsWithRemoteUrl = {
+        ...testAssets,
+        companyLogo: remoteLogoUrl,
+      };
+
+      const html = generateSignatureHtml(testSignatureData.withPhoto, assetsWithRemoteUrl);
+
+      // Should contain the remote URL
+      expect(html).toContain(`src="${remoteLogoUrl}"`);
+    });
+
+    it('should support photo as remote URL instead of data URI', () => {
+      const photoUrl = 'https://example.com/photo.jpg';
+      const dataWithPhotoUrl = {
+        ...testSignatureData.withPhoto,
+        photoDataUri: photoUrl,
+      };
+
+      const html = generateSignatureHtml(dataWithPhotoUrl, testAssets);
+
+      // Should contain the remote photo URL
+      expect(html).toContain(`src="${photoUrl}"`);
+      expect(html).toContain(`alt="${testSignatureData.withPhoto.name}"`);
+    });
+
+    it('should handle mixed data URIs and remote URLs', () => {
+      const remoteLogoUrl = 'https://trustedcarrier.net/darkgreen.svg';
+      const remotePhotoUrl = 'https://example.com/photo.jpg';
+
+      const dataWithRemotePhoto = {
+        ...testSignatureData.withPhoto,
+        photoDataUri: remotePhotoUrl,
+      };
+
+      const assetsWithRemoteUrl = {
+        ...testAssets,
+        companyLogo: remoteLogoUrl,
+      };
+
+      const html = generateSignatureHtml(dataWithRemotePhoto, assetsWithRemoteUrl);
+
+      // Should contain both remote URLs
+      expect(html).toContain(`src="${remoteLogoUrl}"`);
+      expect(html).toContain(`src="${remotePhotoUrl}"`);
+
+      // Should still contain remote URLs for BGL logo and social media icons
+      expect(html).toContain('https://trustedcarrier.net/bgl.svg');
+      expect(html).toContain('https://www.trustedcarrier.net/www.png');
+      expect(html).toContain('https://www.trustedcarrier.net/linkedin.png');
+      expect(html).toContain('https://www.trustedcarrier.net/instagram.png');
     });
   });
 });
