@@ -7,6 +7,7 @@ import { loadSignatureAssets } from './utils/assetsLoader';
 import type { SignatureData, SignatureAssets } from './types/signature';
 import './App.css';
 
+// Main application component for email signature generator
 function App() {
   const [signatureData, setSignatureData] = useState<SignatureData>({
     name: '',
@@ -38,7 +39,20 @@ function App() {
 
     // Only generate if all required fields are filled
     if (signatureData.name && signatureData.title && signatureData.phone && signatureData.email) {
-      const html = generateSignatureHtml(signatureData, assets);
+      // If using remote URLs, override the company logo with the remote URL
+      const effectiveAssets =
+        signatureData.useRemoteUrls && signatureData.companyLogoUrl
+          ? { ...assets, companyLogo: signatureData.companyLogoUrl }
+          : assets;
+
+      // Debug logging to help verify remote URLs feature
+      if (signatureData.useRemoteUrls) {
+        console.log('[Remote URLs] Mode enabled');
+        console.log('[Remote URLs] Company logo URL:', signatureData.companyLogoUrl);
+        console.log('[Remote URLs] Effective logo:', effectiveAssets.companyLogo.substring(0, 100));
+      }
+
+      const html = generateSignatureHtml(signatureData, effectiveAssets);
       setSignatureHtml(html);
     } else {
       setSignatureHtml('');
