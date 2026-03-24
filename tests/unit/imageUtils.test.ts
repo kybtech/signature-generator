@@ -39,7 +39,6 @@ describe('imageUtils', () => {
 
       // Mock FileReader to simulate error
       const originalFileReader = global.FileReader;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       global.FileReader = class {
         onerror: ((error: Error) => void) | null = null;
 

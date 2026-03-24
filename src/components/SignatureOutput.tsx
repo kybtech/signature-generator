@@ -48,10 +48,12 @@ export default function SignatureOutput({ html }: SignatureOutputProps) {
   };
 
   const isDisabled = !html || html.trim() === '';
+  const sizeKB = html ? (new Blob([html]).size / 1024).toFixed(1) : '0';
 
   return (
     <div className="signature-output">
       <h2>Export Signature</h2>
+      {!isDisabled && <p className="size-info">Size: {sizeKB} KB</p>}
       <div className="button-group">
         <button onClick={handleCopy} disabled={isDisabled} className="btn btn-primary" aria-label="Copy to clipboard">
           📋 Copy to Clipboard

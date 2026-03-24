@@ -19,6 +19,7 @@ export default function SignatureForm({ onChange, initialData }: SignatureFormPr
     photoDataUri: initialData?.photoDataUri,
     useRemoteUrls: initialData?.useRemoteUrls || false,
     companyLogoUrl: initialData?.companyLogoUrl || DEFAULT_COMPANY_LOGO_URL,
+    maxSizeKB: initialData?.maxSizeKB ?? 80, // Default to 80KB
   });
 
   const [photoError, setPhotoError] = useState<string>('');
@@ -33,8 +34,9 @@ export default function SignatureForm({ onChange, initialData }: SignatureFormPr
   }, [formData, onChange]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    const parsedValue = type === 'number' ? (value === '' ? 0 : parseInt(value, 10)) : value;
+    setFormData((prev) => ({ ...prev, [name]: parsedValue }));
   };
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -170,6 +172,24 @@ export default function SignatureForm({ onChange, initialData }: SignatureFormPr
         </label>
         <small className="help-text">Use remote image URLs instead of embedding images</small>
       </div>
+
+      {!formData.useRemoteUrls && (
+        <div className="form-group">
+          <label htmlFor="maxSizeKB">
+            Max signature size (KB)
+            <small className="field-hint">0 = unlimited (default: 80)</small>
+          </label>
+          <input
+            type="number"
+            id="maxSizeKB"
+            name="maxSizeKB"
+            min="0"
+            step="1"
+            value={formData.maxSizeKB ?? 80}
+            onChange={handleInputChange}
+          />
+        </div>
+      )}
 
       {formData.useRemoteUrls ? (
         <>

@@ -6,6 +6,7 @@ export interface SignatureData {
   photoDataUri?: string; // Optional photo as data URI or URL
   useRemoteUrls?: boolean; // Whether to use remote URLs instead of data URIs
   companyLogoUrl?: string; // Remote URL for company logo (when useRemoteUrls is true)
+  maxSizeKB?: number; // Maximum signature size in KB (0 = unlimited)
 }
 
 export interface SignatureAssets {

@@ -3,6 +3,7 @@ import SignatureForm from './components/SignatureForm';
 import SignaturePreview from './components/SignaturePreview';
 import SignatureOutput from './components/SignatureOutput';
 import { generateSignatureHtml } from './utils/signatureTemplate';
+import { optimizeSignature, type OptimizationResult } from './utils/sizeBudget';
 import { loadSignatureAssets } from './utils/assetsLoader';
 import type { SignatureData, SignatureAssets } from './types/signature';
 import './App.css';
@@ -17,6 +18,7 @@ function App() {
   });
   const [assets, setAssets] = useState<SignatureAssets | null>(null);
   const [signatureHtml, setSignatureHtml] = useState<string>('');
+  const [optimizationInfo, setOptimizationInfo] = useState<OptimizationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string>('');
 
@@ -52,10 +54,36 @@ function App() {
         console.log('[Remote URLs] Effective logo:', effectiveAssets.companyLogo.substring(0, 100));
       }
 
-      const html = generateSignatureHtml(signatureData, effectiveAssets);
-      setSignatureHtml(html);
+      // Check if we need optimization
+      const maxSize = signatureData.maxSizeKB ?? 0;
+
+      if (maxSize === 0 || signatureData.useRemoteUrls) {
+        // No optimization needed
+        const html = generateSignatureHtml(signatureData, effectiveAssets);
+        setSignatureHtml(html);
+        setOptimizationInfo(null);
+      } else {
+        // Apply space-conscious optimization
+        optimizeSignature({
+          maxSizeKB: maxSize,
+          data: signatureData,
+          assets: effectiveAssets,
+        })
+          .then((result) => {
+            setSignatureHtml(result.html);
+            setOptimizationInfo(result);
+          })
+          .catch((error) => {
+            console.error('Optimization failed:', error);
+            // Fallback to unoptimized
+            const html = generateSignatureHtml(signatureData, effectiveAssets);
+            setSignatureHtml(html);
+            setOptimizationInfo(null);
+          });
+      }
     } else {
       setSignatureHtml('');
+      setOptimizationInfo(null);
     }
   }, [signatureData, assets]);
 
@@ -105,6 +133,26 @@ function App() {
         <section className="output-section">
           <SignatureOutput html={signatureHtml} />
         </section>
+
+        {optimizationInfo && (
+          <section className="optimization-section">
+            <div className={`optimization-info ${optimizationInfo.withinBudget ? 'success' : 'warning'}`}>
+              <h3>Optimization Info</h3>
+              <p>
+                Signature size: <strong>{(optimizationInfo.sizeBytes / 1024).toFixed(1)} KB</strong>
+                {optimizationInfo.targetBytes > 0 && ` / ${(optimizationInfo.targetBytes / 1024).toFixed(0)} KB`}
+              </p>
+              {optimizationInfo.optimizationsApplied.length > 0 && (
+                <p>Optimizations applied: {optimizationInfo.optimizationsApplied.join(', ')}</p>
+              )}
+              {!optimizationInfo.withinBudget && (
+                <p className="warning-text">
+                  ⚠️ Signature exceeds target size. Consider reducing image size or using remote URLs.
+                </p>
+              )}
+            </div>
+          </section>
+        )}
       </main>
 
       <footer className="app-footer">
